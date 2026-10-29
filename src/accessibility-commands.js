@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
 
-import axe from 'axe-core'
 import { logViolations, logViolationsAndGenerateReport } from './accessibility-log'
 
 
@@ -21,16 +20,12 @@ const defaultOptions = {
 const defaultGenerateReport = 'detailed'
 
 
-// cypress-axe is intentionally kept as a local implementation. This is the
-// small part of its public API used by wick-a11y, backed directly by axe-core.
 const injectAxe = () => {
-    cy.window({ log: false }).then((win) => {
-        if (win.axe) return
-
-        const script = win.document.createElement('script')
-        script.textContent = axe.source
-        win.document.head.appendChild(script)
-    })
+    cy.readFile('node_modules/axe-core/axe.min.js').then(source =>
+        cy.window({ log: false }).then(win => {
+            if (!win.axe) win.eval(source)
+        })
+    )
 }
 
 const configureAxe = (configuration) => {
@@ -47,17 +42,21 @@ const checkA11y = (context, options = {}, violationCallback, skipFailures = fals
         ...axeOptions
     } = options
 
+    if (Array.isArray(axeOptions.runOnly)) {
+        axeOptions.runOnly = { type: 'tag', values: axeOptions.runOnly }
+    }
+
     cy.window({ log: false }).then((win) => {
         const run = (remainingRetries) => new Cypress.Promise((resolve, reject) => {
-            win.axe.run(context, axeOptions, (error, results) => {
+            win.axe.run(context || win.document, axeOptions, (error, results) => {
                 if (error) {
                     reject(error)
                     return
                 }
 
-                const violations = results.violations.filter(({ impact }) =>
-                    includedImpacts.includes(impact)
-                )
+                const violations = includedImpacts.length > 0
+                    ? results.violations.filter(({ impact }) => includedImpacts.includes(impact))
+                    : results.violations
 
                 if (violations.length > 0 && remainingRetries > 0) {
                     setTimeout(() => {
