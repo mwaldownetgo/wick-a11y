@@ -6,7 +6,7 @@ declare global {
             /**
              * Cypress custom command to check the accessibility of a given context using Cypress and Axe.
              * Only considers DOM elements that are visible on the screen.
-             * For details on parameters and options, refer to Axe-core® documentation and the cypress-axe package.
+             * For details on parameters and options, refer to the Axe-core® documentation.
              *
              * @param {string | Element | NodeList | Object} [context] - (optional) Defines the scope of the analysis.
              *   Can be a CSS Selector, DOM Element, NodeList, or Object, where object properties include:

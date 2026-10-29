@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 
-import 'cypress-axe'
+import axe from 'axe-core'
 import { logViolations, logViolationsAndGenerateReport } from './accessibility-log'
 
 
@@ -19,6 +19,70 @@ const defaultOptions = {
 }
 
 const defaultGenerateReport = 'detailed'
+
+
+// cypress-axe is intentionally kept as a local implementation. This is the
+// small part of its public API used by wick-a11y, backed directly by axe-core.
+const injectAxe = () => {
+    cy.window({ log: false }).then((win) => {
+        if (win.axe) return
+
+        const script = win.document.createElement('script')
+        script.textContent = axe.source
+        win.document.head.appendChild(script)
+    })
+}
+
+const configureAxe = (configuration) => {
+    cy.window({ log: false }).then((win) => {
+        win.axe.configure(configuration)
+    })
+}
+
+const checkA11y = (context, options = {}, violationCallback, skipFailures = false) => {
+    const {
+        includedImpacts = ['critical', 'serious'],
+        retries = 0,
+        interval = 1000,
+        ...axeOptions
+    } = options
+
+    cy.window({ log: false }).then((win) => {
+        const run = (remainingRetries) => new Cypress.Promise((resolve, reject) => {
+            win.axe.run(context, axeOptions, (error, results) => {
+                if (error) {
+                    reject(error)
+                    return
+                }
+
+                const violations = results.violations.filter(({ impact }) =>
+                    includedImpacts.includes(impact)
+                )
+
+                if (violations.length > 0 && remainingRetries > 0) {
+                    setTimeout(() => {
+                        run(remainingRetries - 1).then(resolve).catch(reject)
+                    }, interval)
+                    return
+                }
+
+                resolve(violations)
+            })
+        })
+
+        return run(retries).then((violations) => {
+            if (violationCallback) violationCallback(violations)
+
+            if (!skipFailures && violations.length > 0) {
+                throw new Error(`${violations.length} accessibility violation(s) found`)
+            }
+        })
+    })
+}
+
+Cypress.Commands.add('injectAxe', injectAxe)
+Cypress.Commands.add('configureAxe', configureAxe)
+Cypress.Commands.add('checkA11y', checkA11y)
 
 
 /**

@@ -18,7 +18,7 @@ Or the videos:
 
 ## MAIN FEATURES
 
-- **Comprehensive Accessibility Analysis**: Leverages axe-core® and cypress-axe plugin for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages axe-core® directly for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
@@ -117,19 +117,19 @@ npm install wick-a11y --save-dev
 ### Cypress v15.0.0 - v15.9.0
 
 - Use wick-a11y *v*2.2.0 or greater
-- Relies on cypress-axe (≥ 1.7.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 
 ### Cypress v14
 
 - Use wick-a11y *v*2.0.0
-- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 -  ⚠️ **Not officially tested** with Cypress *v*14.0.0 to *v*14.0.2 (but should work).
 
 
 ### Cypress v12 and v13
 
 - Use  wick-a11y *v*1.4.0 or earlier
-- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 - If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
    ```sh
    npm install wick-a11y --save-dev --force
