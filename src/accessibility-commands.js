@@ -19,6 +19,8 @@ const defaultOptions = {
 
 const defaultGenerateReport = 'detailed'
 
+const isReportDisabled = (value) => value === false || value === 'false' || value === 'none'
+
 
 const injectAxe = () => {
     cy.readFile('node_modules/axe-core/axe.min.js').then(source =>
@@ -200,7 +202,9 @@ const checkAccessibility = (context, options) => {
         options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
 
         // Normalize generateReport
-        options.generateReport = options.generateReport || generateReport
+            options.generateReport = options.generateReport !== undefined
+            ? options.generateReport
+            : generateReport
         options.generateReport = normalizeGenerateReport(options)
 
 
@@ -218,7 +222,7 @@ const checkAccessibility = (context, options) => {
         cy.checkA11y(
             context,
             cypressAxeOptions,
-            options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none' ? logViolations : logViolationsAndGenerateReport,
+            isReportDisabled(options.generateReport) ? logViolations : logViolationsAndGenerateReport,
             true // skipFailures = true (wick-a11y will handle the failures based in the configuration: includedImpacts and onlyWarnImpacts)
         )
     })
