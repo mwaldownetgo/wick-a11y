@@ -26,6 +26,8 @@ let specResults
  * @returns {Array} - The sorted array of accessibility violations.
  */
 export const logViolations = (violations) => {
+    if (violations.length === 0) return
+
     violations = improveViolationSelectors(violations)
 
     // Log the accessibility violations in Cypress Log and the Browser Console
@@ -39,6 +41,8 @@ export const logViolations = (violations) => {
  * @param {Array} violations - The array of accessibility violations.
  */
 export const logViolationsAndGenerateReport = (violations) => {
+    if (violations.length === 0) return
+
     violations = improveViolationSelectors(violations)
 
     // Log the accessibility violations in Cypress Log and the Browser Console
