@@ -111,7 +111,7 @@ npm install wick-a11y --save-dev
 
 ### Cypress v15.10.0+ (including Cypress v16)
 
-- Use wick-a11y *v*3.0.0 or greater
+- Use wick-a11y *v*4.0.0 or greater
 - Use of `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
 
 ### Cypress v15.0.0 - v15.9.0
@@ -798,6 +798,12 @@ Thank you for your support!
 
 
 ## CHANGELOG
+
+
+### v4.0.0
+
+- Removed the `cypress-axe` dependency and integrated the required wrapper functionality directly with `axe-core`.
+- This is a major release because removing the dependency changes the package integration requirements.
 
 
 ### v3.0.2
